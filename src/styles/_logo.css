@@ -1,0 +1,53 @@
+@layer neeeda {
+  @layer logo {
+    svg {
+      position: fixed;
+      inset: 0;
+      display: block;
+      z-index: 1; /* keep background below UI */
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* SVG label color follows theme text color */
+    g[id^='label-'],
+    path#label-v2 {
+      fill: var(--neeeda--color);
+      /* Smooth theme transition for SVG label colors */
+      transition:
+        fill 300ms ease,
+        stroke 300ms ease;
+    }
+
+    /* drag on the entire label */
+    #v1,
+    #v2,
+    #v3 {
+      /* Default: no interactive cursor when dragging is disabled */
+      cursor: default;
+      /* Improve SVG transform behavior across browsers */
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    /* Enable grab cursor only when logo dragging is explicitly opted-in */
+    body[data-logo-drag='true'] #v1,
+    body[data-logo-drag='true'] #v2,
+    body[data-logo-drag='true'] #v3 {
+      cursor: grab;
+    }
+
+    [id^='label-'] {
+      pointer-events: auto;
+    }
+
+    /* ⬇️ Anti-flash fix: hide logo+trails until we are "booted".
+  Use visibility to preserve measurements (getBBox/getBoundingClientRect). */
+    body:not(.booted) #neeeda-logo,
+    body:not(.booted) #segA,
+    body:not(.booted) #segB {
+      visibility: hidden;
+    }
+  }
+}

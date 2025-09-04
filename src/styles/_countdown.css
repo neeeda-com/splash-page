@@ -1,0 +1,178 @@
+@layer neeeda {
+  @layer countdown {
+    /* Countdown dialog styles */
+    dialog[data-countdown] {
+      color: var(--neeeda--color);
+
+      padding: 0;
+      max-width: min(92vw, 52.4rem);
+      height: 22rem;
+      box-shadow: 0 2rem 6rem color-mix(in oklab, var(--neeeda--color) 15%, transparent);
+
+      background-image:
+        linear-gradient(0deg, var(--neeeda--countdown-modal--background-color)),
+        linear-gradient(
+          -120deg,
+          var(--neeeda--gradient--accent-c),
+          var(--neeeda--gradient--accent-b),
+          var(--neeeda--gradient--accent-a)
+        );
+
+      background-clip: padding-box, border-box;
+      background-origin: border-box;
+      border: 2px solid transparent;
+      border-radius: 2.4rem;
+      outline: none;
+
+      /* Enter/Exit animation base */
+      opacity: 0;
+      transform: translateY(-4.8rem);
+      transition:
+        opacity 240ms ease,
+        transform 240ms ease;
+
+      &::backdrop {
+        /* Start transparent and fade in when dialog becomes visible */
+        background: transparent;
+        transition:
+          background 240ms ease,
+          backdrop-filter 240ms ease;
+
+        backdrop-filter: blur(4px);
+      }
+
+      /* Visible state applied by JS right after showModal() */
+      &.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      &.is-visible::backdrop {
+        background: color-mix(in oklab, var(--neeeda--color) 10%, transparent);
+      }
+
+      /* Optional class while closing (for clarity/readability) */
+      &.is-closing {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      form {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      header {
+        display: flex;
+        place-items: center;
+        place-content: end;
+        padding: 1.6rem 1.6rem 0;
+
+        button {
+          display: flex;
+          place-content: center;
+          place-items: center;
+
+          appearance: none;
+          border: none;
+          background: transparent;
+          font-size: 1.8em;
+          cursor: pointer;
+          border-radius: 50%;
+          padding: 0;
+          width: 2.4rem;
+          height: 2.4rem;
+          color: var(--neeeda--color);
+        }
+      }
+
+      section {
+        display: flex;
+        flex-flow: column nowrap;
+        place-content: center;
+        place-items: center;
+        gap: 2.4rem;
+
+        padding: 0 2.4rem 2.4rem;
+      }
+
+      p {
+        font-size: 1.4rem;
+        line-height: 1.5;
+      }
+
+      [data-time-grid] {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 1.2rem;
+
+        div {
+          display: flex;
+          flex-flow: column nowrap;
+          place-content: center;
+          place-items: center;
+          gap: 1.2rem;
+
+          span {
+            display: flex;
+            place-content: center;
+            place-items: center;
+            width: 6.4rem;
+            aspect-ratio: 1;
+            border: 0;
+            border-radius: 1.2rem;
+            background: var(--neeeda--countdown-box--background-color);
+
+            font-variant-numeric: tabular-nums;
+            font-size: 2.4rem;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      dialog[data-countdown] {
+        height: 26.8rem;
+
+        header {
+          button {
+            width: 3.2rem;
+            height: 3.2rem;
+          }
+        }
+
+        section {
+          padding: 0 4.8rem 4.8rem;
+        }
+
+        p {
+          font-size: 1.6rem;
+        }
+
+        [data-time-grid] {
+          gap: 1.2rem;
+
+          div {
+            gap: 1.2rem;
+
+            span {
+              width: 9.2rem;
+              border-radius: 1.6rem;
+              font-size: 4.8rem;
+            }
+          }
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      dialog[data-countdown] {
+        transition: none;
+      }
+      dialog[data-countdown]::backdrop {
+        transition: none;
+      }
+    }
+  }
+}

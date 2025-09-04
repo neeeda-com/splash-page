@@ -1,0 +1,57 @@
+@font-face {
+  font-family: 'neeeda';
+  src:
+    url('fonts/neeeda.ttf?zg1max') format('truetype'),
+    url('fonts/neeeda.woff?zg1max') format('woff'),
+    url('fonts/neeeda.svg?zg1max#neeeda') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^='neeeda-icon-'] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  /* biome-ignore lint/a11y/useGenericFontNames: <this is an icon font> */
+  font-family: 'neeeda' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.neeeda-icon-video:before {
+  content: '\e900';
+}
+.neeeda-icon-mail:before {
+  content: '\e901';
+}
+.neeeda-icon-facebook:before {
+  content: '\e902';
+}
+.neeeda-icon-instagram:before {
+  content: '\e903';
+}
+.neeeda-icon-youtube:before {
+  content: '\e904';
+}
+.neeeda-icon-linked-in:before {
+  content: '\e905';
+}
+.neeeda-icon-color-scheme-light:before {
+  content: '\e906';
+}
+.neeeda-icon-color-scheme-dark:before {
+  content: '\e907';
+}
+.neeeda-icon-color-scheme-system:before {
+  content: '\e908';
+}
+.neeeda-icon-close:before {
+  content: '\e909';
+}

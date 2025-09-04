@@ -1,0 +1,119 @@
+@layer neeeda {
+  @layer layout {
+    :root {
+      --layout--padding-top: 8.2rem;
+      --layout--gap: 2.4rem;
+      --layout--gradient--height: calc(var(--layout--gap) * 2 + var(--neeeda--button--primary--height));
+    }
+
+    body {
+      margin: 0;
+    }
+
+    main {
+      padding: var(--layout--padding-top) var(--layout--gap) var(--layout--gap);
+    }
+
+    main > section {
+      display: flex;
+      flex-flow: column;
+      place-items: center;
+      width: 100%;
+      gap: calc(var(--layout--gap) * 2);
+      opacity: 0;
+      transition: opacity 1500ms ease-out;
+      will-change: opacity;
+    }
+
+    main > section > article {
+      display: flex;
+      flex-flow: column nowrap;
+
+      place-content: start;
+      place-items: start;
+      gap: var(--layout--gap);
+
+      flex-grow: 0;
+
+      &::before {
+        content: '';
+        position: fixed;
+        height: var(--layout--gradient--height);
+        pointer-events: none;
+        z-index: 1;
+        inset: 0 0 auto;
+      }
+
+      &::after {
+        content: '';
+        position: fixed;
+        height: var(--layout--gradient--height);
+        pointer-events: none;
+        z-index: 1;
+        inset: auto 0 0;
+      }
+
+      button {
+        position: fixed;
+        inset: auto var(--layout--gap) var(--layout--gap);
+        z-index: 2;
+      }
+    }
+
+    @media screen and (min-width: 992px) {
+      main > section {
+        place-items: start;
+        flex-flow: row;
+        gap: 0;
+
+        & > article {
+          max-inline-size: 50ch;
+
+          &::before {
+            content: initial;
+            position: static;
+            inset: auto;
+            height: 0;
+            pointer-events: none;
+            z-index: 1;
+          }
+
+          &::after {
+            content: initial;
+            position: static;
+            inset: auto;
+            height: 0;
+            pointer-events: none;
+            z-index: 1;
+          }
+
+          button {
+            position: static;
+            inset: auto;
+            z-index: initial;
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 1200px) {
+      :root {
+        --layout--padding-top: 3.6rem;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      main {
+        padding: 2.4rem;
+
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}

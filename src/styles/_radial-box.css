@@ -1,0 +1,308 @@
+@layer neeeda {
+  @layer radial {
+    /* Hide radial UI by default; shown only when JS detects CSS trig functions support */
+    :root:not(.supports-trig) [data-radial] {
+      display: none !important;
+    }
+
+    /* Numeric epsilon to stabilize divisions in trig math */
+    @property --eps {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 0.000001;
+    }
+
+    /* Typed custom property for per-button size (enables smooth interpolation) */
+    @property --size {
+      syntax: '<length>';
+      inherits: false;
+      initial-value: 0px;
+    }
+
+    /* Register size variables so they can interpolate smoothly */
+    @property --btn-size-0 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 96px;
+    }
+
+    @property --btn-size-1 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 144px;
+    }
+
+    @property --btn-size-2 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 216px;
+    }
+
+    @property --btn-size-3 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 144px;
+    }
+
+    @property --btn-size-4 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 216px;
+    }
+
+    @property --btn-size-5 {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 96px;
+    }
+
+    @property --hover-grow {
+      syntax: '<number>';
+      inherits: false;
+      initial-value: 1.2;
+    }
+
+    @property --center-scale {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 1;
+    }
+
+    /* Radial buttons */
+    [data-radial] {
+      position: relative;
+      display: flex;
+      place-items: center;
+      margin: 0;
+      flex-grow: 0;
+      flex-shrink: 0;
+
+      /* dynamic square box sized via JS; fallback keeps prior behavior */
+      width: var(--radial-box, 100vh);
+      height: var(--radial-box, 100vh);
+
+      /* margin left mobile, for centering the whole radial box in viewport width */
+      /* TODO: adjust margin for desktop if needed */
+      translate: -1rem 0;
+
+      /* Central video button size */
+      --center-base: 288px; /* base */
+      --center-scale: 1; /* growth factor */
+      --center-size: calc(var(--center-base) * var(--center-scale));
+
+      /* Dynamic radial geometry (all computed at runtime in CSS) */
+      --kiss: 0.5px; /* 1px "kiss" overlap */
+
+      /* Base sizes per index (edit these to change the default layout) */
+      --btn-size-0-base: 96px;
+      --btn-size-1-base: 144px;
+      --btn-size-2-base: 216px;
+      --btn-size-3-base: 144px;
+      --btn-size-4-base: 216px;
+      --btn-size-5-base: 96px;
+
+      /* Active sizes used by layout (animatable and referenced in geometry) */
+      --btn-size-0: var(--btn-size-0-base);
+      --btn-size-1: var(--btn-size-1-base);
+      --btn-size-2: var(--btn-size-2-base);
+      --btn-size-3: var(--btn-size-3-base);
+      --btn-size-4: var(--btn-size-4-base);
+      --btn-size-5: var(--btn-size-5-base);
+
+      /* Transition for size variables so geometry interpolates */
+      transition:
+        --center-scale 225ms linear,
+        --btn-size-0 225ms linear,
+        --btn-size-1 225ms linear,
+        --btn-size-2 225ms linear,
+        --btn-size-3 225ms linear,
+        --btn-size-4 225ms linear,
+        --btn-size-5 225ms linear;
+
+      /* Base angle for i:0 (email) – JS reads this and computes the rest */
+      --a0: 175deg;
+
+      /* Interactions: unify :hover/:focus via :where and keep geometry reflow here */
+      &:has([data-btn]:nth-of-type(1):where(:hover, :focus, :focus-visible)) {
+        --center-scale: var(--hover-grow, 1.05);
+      }
+
+      &:has([data-btn]:nth-of-type(2):where(:hover, :focus, :focus-visible)) {
+        --btn-size-0: calc(var(--btn-size-0-base) * var(--hover-grow, 1.05));
+      }
+
+      &:has([data-btn]:nth-of-type(3):where(:hover, :focus, :focus-visible)) {
+        --btn-size-1: calc(var(--btn-size-1-base) * var(--hover-grow, 1.05));
+      }
+
+      &:has([data-btn]:nth-of-type(4):where(:hover, :focus, :focus-visible)) {
+        --btn-size-2: calc(var(--btn-size-2-base) * var(--hover-grow, 1.05));
+      }
+
+      &:has([data-btn]:nth-of-type(5):where(:hover, :focus, :focus-visible)) {
+        --btn-size-3: calc(var(--btn-size-3-base) * var(--hover-grow, 1.05));
+      }
+
+      &:has([data-btn]:nth-of-type(6):where(:hover, :focus, :focus-visible)) {
+        --btn-size-4: calc(var(--btn-size-4-base) * var(--hover-grow, 1.05));
+      }
+
+      &:has([data-btn]:nth-of-type(7):where(:hover, :focus, :focus-visible)) {
+        --btn-size-5: calc(var(--btn-size-5-base) * var(--hover-grow, 1.05));
+      }
+      /* Prevent the color-scheme button from growing on hover/focus — keep its base size */
+      &:has([data-btn][data-icon='color-scheme-dark']:where(:hover, :focus, :focus-visible)) {
+        --btn-size-5: var(--btn-size-5-base);
+      }
+    }
+
+    /* Button order: 1=center, 2=i0, 3=i1, 4=i2, 5=i3, 6=i4, 7=i5 */
+    [data-btn] {
+      /* Defaults overridden per button */
+      --size: 96px;
+      --icon-dx: 0;
+      --icon-dy: 0;
+      --icon-scale: 1;
+      --x: 0px;
+      --y: 0px;
+
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(var(--x), var(--y)) translate(-50%, -50%);
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      border: none;
+      background: var(--neeeda--radial-button--background-color);
+      color: var(--neeeda--color);
+      font-weight: 600;
+      display: flex;
+      place-items: center;
+      place-content: center;
+      cursor: pointer;
+
+      transition:
+        background-color 300ms ease,
+        color 300ms ease;
+      /* box-shadow: 0 2px 8px rgba(0,0,0,0.08); */
+
+      padding: 0;
+      line-height: 0;
+      overflow: visible;
+
+      &:hover {
+        background: color-mix(in oklab, var(--neeeda--radial-button--background-color), var(--neeeda--color) 5%);
+      }
+
+      &:active {
+        background: color-mix(in oklab, var(--neeeda--radial-button--background-color), var(--neeeda--color) 10%);
+      }
+
+      [class^='neeeda-icon-'] {
+        font-size: 2rem; /* mobile default */
+        transition: font-size 150ms ease;
+      }
+    }
+
+    /* Center play button */
+    [data-btn][data-role='center'] {
+      --size: var(--center-size);
+      --x: 0px;
+      --y: 0px;
+      /* Slight optical centering for play triangle */
+      --icon-dx: -0.03;
+      color: black;
+      background: hsla(261, 54%, 70%, 1);
+
+      &:hover {
+        background: color-mix(in srgb, hsla(261, 54%, 70%, 1), black 10%);
+      }
+
+      &:active {
+        background: color-mix(in srgb, hsla(261, 54%, 70%, 1), black 20%);
+      }
+    }
+
+    /* i:0 — Email (96px) at 175°; tangent to the center (288) with touch=1px.
+  R0 = cr + b0 − touch = 144 + 48 − 1 = 191px; angle0 = --a0 (defaults to 175°).
+  Tip: change --a0 on .radial to rotate the entire ring.
+*/
+    [data-btn][data-icon='mail'] {
+      width: var(--btn-size-0);
+      height: var(--btn-size-0);
+    }
+
+    /* i:1 — 144px: tangent to the center and to i:0.
+  R1 = cr + b1 − touch = 215px; neighbor distance d01 = b0 + b1 − touch = 119px.
+  Δ01 = acos((R0^2 + R1^2 − d01^2) / (2·R0·R1)) ≈ 33.3° (computed at runtime).
+  angle1 = --a1 = --a0 + Δ01 (≈ 208.3° with defaults).
+*/
+    [data-btn][data-icon='facebook'] {
+      width: var(--btn-size-1);
+      height: var(--btn-size-1);
+    }
+
+    /* i:2 — 216px: tangent to the center and to i:1.
+  R2 = 251px; neighbor distance d12 = 179px.
+  Δ12 computed via law of cosines (runtime). angle2 = --a2 = --a1 + Δ12 (≈ 252.6°).
+*/
+    [data-btn][data-icon='instagram'] {
+      width: var(--btn-size-2);
+      height: var(--btn-size-2);
+    }
+
+    /* i:3 — 144px: tangent to the center and to i:2.
+  R3 = 215px; d23 = 179px; Δ23 computed at runtime. angle3 = --a3 (≈ 297°).
+*/
+    [data-btn][data-icon='youtube'] {
+      width: var(--btn-size-3);
+      height: var(--btn-size-3);
+    }
+
+    /* i:4 — 216px: tangent to the center and to i:3.
+  R4 = 251px; d34 = 179px; Δ34 computed at runtime. angle4 = --a4 (≈ 341°).
+*/
+    [data-btn][data-icon='linked-in'] {
+      width: var(--btn-size-4);
+      height: var(--btn-size-4);
+    }
+
+    /* i:5 — 96px: tangent to the center and to i:4.
+  R5 = 191px; d45 = 155px; Δ45 computed at runtime. angle5 = --a5 (≈ 19.6°).
+*/
+    [data-btn][data-icon='color-scheme-dark'] {
+      width: var(--btn-size-5);
+      height: var(--btn-size-5);
+    }
+
+    /* Icon size intermediate step (tablet) */
+    @media screen and (min-width: 992px) {
+      [data-radial] {
+        position: fixed;
+        inset: auto 2.4rem 2.4rem auto;
+        margin-block-end: -15rem;
+      }
+
+      [class^='neeeda-icon-'] {
+        font-size: 3.6rem;
+      }
+    }
+
+    @media screen and (min-width: 1200px) and (min-height: 700px) {
+      /* Desktop: mantieni larghezza dinamica ma altezza fissa fullscreen */
+      [data-radial] {
+        position: fixed;
+        inset: 0 14vw 0 auto;
+        margin-block-end: 0;
+        margin: auto;
+        translate: 0;
+      }
+
+      /* Desktop icon size override */
+      [class^='neeeda-icon-'] {
+        font-size: 4.8rem;
+      }
+    }
+  }
+}

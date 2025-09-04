@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Caches
+.cache/
+.parcel-cache
+
+# Misc
+coverage/
+*.lcov
+*.log
+
+# Generated
+src/posts.json
+src/tags.json
+src/months.json

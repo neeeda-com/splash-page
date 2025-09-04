@@ -1,0 +1,68 @@
+@import './neeeda-icons/style.css';
+@import './factor-a/style.css';
+@import './_typography.css';
+@import './_color-scheme.css';
+@import './_layout.css';
+@import './_components.css';
+@import './_logo.css';
+@import './_countdown.css';
+@import './_radial-box.css';
+
+* {
+  box-sizing: border-box;
+}
+
+/* When preloader nears completion, reveal radial UI */
+body.loader-done main > section {
+  opacity: 1;
+}
+
+/* Prevent button clicks until the loader is complete. This blocks mouse/touch
+   interactions on native buttons and radial [data-btn] elements until
+   `body.loader-done` is added. Focus/navigation via keyboard is preserved; if
+   you want to fully disable focus too, we can add tabindex handling. */
+body:not(.loader-done) button,
+body:not(.loader-done) [data-btn] {
+  pointer-events: none;
+}
+
+/* SVG background: match the page background color and respect color-scheme tokens.
+   When the preloader ends and .loader-done is added to <body>, make the svg background
+   instantly transparent (no transition) so the page background shows through. */
+#svg-bg {
+  /* inherit the same background color token used for body */
+  fill: var(--neeeda--background-color, #000);
+}
+
+body.loader-done #svg-bg {
+  fill: transparent; /* immediate: no transition */
+}
+
+/* No per-button local size override: we animate via parent size vars so the whole geometry reflows */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-btn] {
+    transition: none;
+  }
+
+  body,
+  button,
+  g[id^='label-'],
+  path#label-v2 {
+    transition: none;
+  }
+}
+
+/* Screen-reader-only helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
