@@ -1,5 +1,4 @@
-@import './neeeda-icons/style.css';
-@import './factor-a/style.css';
+@import './_reset.css';
 @import './_typography.css';
 @import './_color-scheme.css';
 @import './_layout.css';
@@ -8,14 +7,13 @@
 @import './_countdown.css';
 @import './_radial-box.css';
 
-* {
-  box-sizing: border-box;
-}
 
 /* When preloader nears completion, reveal radial UI */
 body.loader-done main > section {
   opacity: 1;
 }
+
+/* Focus outlines are handled in component-specific styles using :focus-visible */
 
 /* Prevent button clicks until the loader is complete. This blocks mouse/touch
    interactions on native buttons and radial [data-btn] elements until

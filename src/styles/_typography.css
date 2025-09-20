@@ -1,3 +1,6 @@
+@import './neeeda-icons/style.css';
+@import './factor-a/style.css';
+
 @layer neeeda {
   @layer typography {
     :root {
@@ -32,7 +35,7 @@
       }
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 992px) {
       h1 {
         font-size: 4.8rem;
       }

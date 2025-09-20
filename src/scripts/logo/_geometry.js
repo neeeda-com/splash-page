@@ -67,9 +67,9 @@ export function installGeometry(cls) {
     /** Simple breakpoint helper (mirrors CSS) tolerant to test envs. */
     isMobile() {
       try {
-        return window.matchMedia('(max-width: 1199.98px)').matches;
+        return window.matchMedia('(max-width: 991.98px)').matches;
       } catch {
-        return window.innerWidth < 1200;
+        return window.innerWidth < 992;
       }
     },
   });

@@ -53,9 +53,19 @@ export function installTrail(cls) {
         const g2 = this.groups[1].node.getBoundingClientRect();
         const g3 = this.groups[2].node.getBoundingClientRect();
 
-        const v1 = [r.left + g1.width / 2 + SAFE_AREA_PADDING.mobile, r.top + g1.height / 2 + SAFE_AREA_PADDING.mobile];
-        const v2 = [r.left + r.width / 2, r.top + g2.height / 2 + SAFE_AREA_PADDING.mobile];
-        const v3 = [r.right - g3.width / 2 - SAFE_AREA_PADDING.mobile, r.top + g3.height / 2 + SAFE_AREA_PADDING.mobile];
+        const pad = SAFE_AREA_PADDING.mobile;
+        // Centers for v1 and v3 hugging the safe areas
+        const v1cx = r.left + g1.width / 2 + pad;
+        const v3cx = r.right - g3.width / 2 - pad;
+        // Reference edges
+        const v1Right = v1cx + g1.width / 2;
+        const v3Left = v3cx - g3.width / 2;
+        // Center v2 between v1's right edge and v3's left edge
+        const v2cx = (v1Right + v3Left) / 2;
+
+        const v1 = [v1cx, r.top + g1.height / 2 + pad];
+        const v2 = [v2cx, r.top + g2.height / 2 + pad];
+        const v3 = [v3cx, r.top + g3.height / 2 + pad];
 
         return { v1, v2, v3 };
       }

@@ -21,7 +21,8 @@ describe('RadialBox sizing', () => {
     const el = document.querySelector('[data-radial]');
     expect(el.style.getPropertyValue('--center-base')).not.toBe('');
     expect(el.style.getPropertyValue('--btn-size-0-base')).not.toBe('');
-    expect(el.style.getPropertyValue('--radial-box')).not.toBe('');
+    expect(el.style.getPropertyValue('--radial-box-w')).not.toBe('');
+    expect(el.style.getPropertyValue('--radial-box-h')).not.toBe('');
   });
 
   it('is idempotent for same viewport', () => {

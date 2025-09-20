@@ -1,5 +1,9 @@
 @layer neeeda {
   @layer radial {
+    :root {
+      --radial-btn--icon-size: 2rem;
+    }
+
     /* Hide radial UI by default; shown only when JS detects CSS trig functions support */
     :root:not(.supports-trig) [data-radial] {
       display: none !important;
@@ -68,6 +72,13 @@
       initial-value: 1;
     }
 
+    /* Global scale to fit the layout into a target box without changing base sizes */
+    @property --fit-scale {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 1;
+    }
+
     /* Radial buttons */
     [data-radial] {
       position: relative;
@@ -77,9 +88,9 @@
       flex-grow: 0;
       flex-shrink: 0;
 
-      /* dynamic square box sized via JS; fallback keeps prior behavior */
-      width: var(--radial-box, 100vh);
-      height: var(--radial-box, 100vh);
+      /* dynamic rectangular box sized via JS; fallback keeps prior behavior */
+      width: var(--radial-box-w, 100vw);
+      height: var(--radial-box-h, calc(var(--radial-box-w, 100vw) / 1.2307));
 
       /* margin left mobile, for centering the whole radial box in viewport width */
       /* TODO: adjust margin for desktop if needed */
@@ -88,7 +99,7 @@
       /* Central video button size */
       --center-base: 288px; /* base */
       --center-scale: 1; /* growth factor */
-      --center-size: calc(var(--center-base) * var(--center-scale));
+      --center-size: calc(var(--center-base) * var(--center-scale) * var(--fit-scale));
 
       /* Dynamic radial geometry (all computed at runtime in CSS) */
       --kiss: 0.5px; /* 1px "kiss" overlap */
@@ -102,12 +113,12 @@
       --btn-size-5-base: 96px;
 
       /* Active sizes used by layout (animatable and referenced in geometry) */
-      --btn-size-0: var(--btn-size-0-base);
-      --btn-size-1: var(--btn-size-1-base);
-      --btn-size-2: var(--btn-size-2-base);
-      --btn-size-3: var(--btn-size-3-base);
-      --btn-size-4: var(--btn-size-4-base);
-      --btn-size-5: var(--btn-size-5-base);
+      --btn-size-0: calc(var(--btn-size-0-base) * var(--fit-scale));
+      --btn-size-1: calc(var(--btn-size-1-base) * var(--fit-scale));
+      --btn-size-2: calc(var(--btn-size-2-base) * var(--fit-scale));
+      --btn-size-3: calc(var(--btn-size-3-base) * var(--fit-scale));
+      --btn-size-4: calc(var(--btn-size-4-base) * var(--fit-scale));
+      --btn-size-5: calc(var(--btn-size-5-base) * var(--fit-scale));
 
       /* Transition for size variables so geometry interpolates */
       transition:
@@ -121,39 +132,9 @@
 
       /* Base angle for i:0 (email) – JS reads this and computes the rest */
       --a0: 175deg;
-
-      /* Interactions: unify :hover/:focus via :where and keep geometry reflow here */
-      &:has([data-btn]:nth-of-type(1):where(:hover, :focus, :focus-visible)) {
-        --center-scale: var(--hover-grow, 1.05);
-      }
-
-      &:has([data-btn]:nth-of-type(2):where(:hover, :focus, :focus-visible)) {
-        --btn-size-0: calc(var(--btn-size-0-base) * var(--hover-grow, 1.05));
-      }
-
-      &:has([data-btn]:nth-of-type(3):where(:hover, :focus, :focus-visible)) {
-        --btn-size-1: calc(var(--btn-size-1-base) * var(--hover-grow, 1.05));
-      }
-
-      &:has([data-btn]:nth-of-type(4):where(:hover, :focus, :focus-visible)) {
-        --btn-size-2: calc(var(--btn-size-2-base) * var(--hover-grow, 1.05));
-      }
-
-      &:has([data-btn]:nth-of-type(5):where(:hover, :focus, :focus-visible)) {
-        --btn-size-3: calc(var(--btn-size-3-base) * var(--hover-grow, 1.05));
-      }
-
-      &:has([data-btn]:nth-of-type(6):where(:hover, :focus, :focus-visible)) {
-        --btn-size-4: calc(var(--btn-size-4-base) * var(--hover-grow, 1.05));
-      }
-
-      &:has([data-btn]:nth-of-type(7):where(:hover, :focus, :focus-visible)) {
-        --btn-size-5: calc(var(--btn-size-5-base) * var(--hover-grow, 1.05));
-      }
-      /* Prevent the color-scheme button from growing on hover/focus — keep its base size */
-      &:has([data-btn][data-icon='color-scheme-dark']:where(:hover, :focus, :focus-visible)) {
-        --btn-size-5: var(--btn-size-5-base);
-      }
+      /* Vertical origin shift (px): JS sets this so center sits on box bottom */
+      --y-origin: 0px;
+      --x-origin: -2.5vw;
     }
 
     /* Button order: 1=center, 2=i0, 3=i1, 4=i2, 5=i3, 6=i4, 7=i5 */
@@ -169,7 +150,7 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(var(--x), var(--y)) translate(-50%, -50%);
+      transform: translate(calc(var(--x) + var(--x-origin)), calc(var(--y) + var(--y-origin)));
       width: var(--size);
       height: var(--size);
       border-radius: 50%;
@@ -200,9 +181,10 @@
       }
 
       [class^='neeeda-icon-'] {
-        font-size: 2rem; /* mobile default */
+        font-size: var(--radial-btn--icon-size); /* mobile default */
         transition: font-size 150ms ease;
       }
+      /* From 375px up to tablet breakpoint, bump icons to 24px (2.4rem with 10px root) */
     }
 
     /* Center play button */
@@ -277,31 +259,58 @@
     }
 
     /* Icon size intermediate step (tablet) */
-    @media screen and (min-width: 992px) {
-      [data-radial] {
-        position: fixed;
-        inset: auto 2.4rem 2.4rem auto;
-        margin-block-end: -15rem;
-      }
-
-      [class^='neeeda-icon-'] {
-        font-size: 3.6rem;
+    @media screen and (min-width: 375px) and (max-width: 767.99px) {
+      :root {
+        --radial-btn--icon-size: 2.4rem;
       }
     }
 
-    @media screen and (min-width: 1200px) and (min-height: 700px) {
-      /* Desktop: mantieni larghezza dinamica ma altezza fissa fullscreen */
-      [data-radial] {
-        position: fixed;
-        inset: 0 14vw 0 auto;
-        margin-block-end: 0;
-        margin: auto;
-        translate: 0;
+    @media screen and (min-width: 768px) and (max-width: 991.99px) {
+      :root {
+        --radial-btn--icon-size: 3.6rem;
+      }
+    }
+
+    @media screen and (min-width: 992px) {
+      :root {
+        --radial-btn--icon-size: 4.8rem;
       }
 
-      /* Desktop icon size override */
-      [class^='neeeda-icon-'] {
-        font-size: 4.8rem;
+      /* Radial buttons */
+      [data-radial] {
+        /* Interactions: unify :hover/:focus via :where and keep geometry reflow here */
+        &:has([data-btn]:nth-of-type(1):where(:hover, :focus, :focus-visible)) {
+          --center-scale: var(--hover-grow, 1.05);
+        }
+
+        &:has([data-btn]:nth-of-type(2):where(:hover, :focus, :focus-visible)) {
+          --btn-size-0: calc(var(--btn-size-0-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        &:has([data-btn]:nth-of-type(3):where(:hover, :focus, :focus-visible)) {
+          --btn-size-1: calc(var(--btn-size-1-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        &:has([data-btn]:nth-of-type(4):where(:hover, :focus, :focus-visible)) {
+          --btn-size-2: calc(var(--btn-size-2-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        &:has([data-btn]:nth-of-type(5):where(:hover, :focus, :focus-visible)) {
+          --btn-size-3: calc(var(--btn-size-3-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        &:has([data-btn]:nth-of-type(6):where(:hover, :focus, :focus-visible)) {
+          --btn-size-4: calc(var(--btn-size-4-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        &:has([data-btn]:nth-of-type(7):where(:hover, :focus, :focus-visible)) {
+          --btn-size-5: calc(var(--btn-size-5-base) * var(--hover-grow, 1.05) * var(--fit-scale));
+        }
+
+        /* Prevent the color-scheme button from growing on hover/focus — keep its base size */
+        &:has([data-btn][data-icon='color-scheme-dark']:where(:hover, :focus, :focus-visible)) {
+          --btn-size-5: calc(var(--btn-size-5-base) * var(--fit-scale));
+        }
       }
     }
   }

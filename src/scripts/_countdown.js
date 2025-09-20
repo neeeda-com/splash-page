@@ -34,6 +34,11 @@ function fmtTarget(d) {
 class CountdownDialog {
   constructor(dialog) {
     this.dialog = dialog;
+    // Make dialog itself focusable so we can place focus on the modal container
+    try {
+      this.dialog.setAttribute('tabindex', '-1');
+    } catch {}
+
     this.dd = dialog.querySelector('[data-dd]');
     this.hh = dialog.querySelector('[data-hh]');
     this.mm = dialog.querySelector('[data-mm]');
@@ -76,9 +81,18 @@ class CountdownDialog {
   open() {
     if (!this.dialog.open) {
       this.dialog.showModal();
+
       // trigger enter animation on next frame
-      requestAnimationFrame(() => this.dialog.classList.add('is-visible'));
+      requestAnimationFrame(() => {
+        this.dialog.classList.add('is-visible');
+
+        // After becoming visible, move focus to the dialog container
+        try {
+          this.dialog.focus({ preventScroll: true });
+        } catch {}
+      });
     }
+
     this.start();
   }
 
@@ -120,29 +134,34 @@ class CountdownDialog {
   }
 
   tick(force = false) {
-    const now = new Date();
-    let diff = Math.max(0, this.target.getTime() - now.getTime());
+    const MS = {
+      second: 1000,
+      minute: 60 * 1000,
+      hour: 60 * 60 * 1000,
+      day: 24 * 60 * 60 * 1000,
+    };
 
-    const days = Math.floor(diff / (24 * 3600 * 1000));
-    diff -= days * 24 * 3600 * 1000;
+    const now = Date.now();
+    let diff = Math.max(0, this.target.getTime() - now);
 
-    const hours = Math.floor(diff / (3600 * 1000));
-    diff -= hours * 3600 * 1000;
+    const days = Math.floor(diff / MS.day);
+    diff %= MS.day;
 
-    const minutes = Math.floor(diff / (60 * 1000));
-    diff -= minutes * 60 * 1000;
+    const hours = Math.floor(diff / MS.hour);
+    diff %= MS.hour;
 
-    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(diff / MS.minute);
+    diff %= MS.minute;
 
-    if (this.dd) this.dd.textContent = String(days);
-    if (this.hh) this.hh.textContent = pad2(hours);
-    if (this.mm) this.mm.textContent = pad2(minutes);
-    if (this.ss) this.ss.textContent = pad2(seconds);
+    const seconds = Math.floor(diff / MS.second);
+
+    this.dd && (this.dd.textContent = String(days));
+    this.hh && (this.hh.textContent = pad2(hours));
+    this.mm && (this.mm.textContent = pad2(minutes));
+    this.ss && (this.ss.textContent = pad2(seconds));
 
     // Optional: when reaches zero, stop the timer
-    if (!force && days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-      this.stop();
-    }
+    !force && days === 0 && hours === 0 && minutes === 0 && seconds === 0 && this.stop();
   }
 }
 

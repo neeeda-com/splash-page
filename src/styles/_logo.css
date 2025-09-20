@@ -50,5 +50,28 @@
     body:not(.booted) #segB {
       visibility: hidden;
     }
+
+    /* iOS reload refinement: start logo fully transparent & non-interactive, then fade in.
+       We separate visibility (used above to avoid layout flashes) from opacity so that
+       on normal cold boots we still avoid flashes, while on reloads we can control a
+       smooth fade.  Sequence:
+         1. body gets .booted (existing) => visibility:visible
+         2. JS adds .logo-fade-in-start immediately (opacity 0)
+         3. Next frame JS swaps to .logo-fade-in-active (transition to opacity 1)
+         4. When transition ends, JS adds .logo-faded and kicks off wiggle.
+    */
+    body.booted.logo-fade-in-start #neeeda-logo,
+    body.booted.logo-fade-in-start #segA,
+    body.booted.logo-fade-in-start #segB {
+      opacity: 0;
+    }
+
+    body.booted.logo-fade-in-active #neeeda-logo,
+    body.booted.logo-fade-in-active #segA,
+    body.booted.logo-fade-in-active #segB {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 500ms linear;
+    }
   }
 }

@@ -28,34 +28,21 @@
         border-color 300ms ease;
 
       &:hover {
-        background-color: color-mix(
-          in oklab,
-          var(--neeeda--button--background-color),
-          var(--neeeda--button--color) 10%
-        );
+        background-color: color-mix(in srgb, var(--neeeda--button--background-color), var(--neeeda--button--color) 15%);
       }
 
       &:active {
-        background-color: color-mix(
-          in oklab,
-          var(--neeeda--button--background-color),
-          var(--neeeda--button--color) 20%
-        );
+        background-color: color-mix(in srgb, var(--neeeda--button--background-color), var(--neeeda--button--color) 20%);
       }
 
       &:disabled {
-        color: color-mix(in oklab, var(--neeeda--color) 55%, transparent);
-        background-color: color-mix(
-          in oklab,
-          var(--neeeda--button--background-color),
-          var(--neeeda--button--color) 20%
-        );
+        color: color-mix(in srgb, var(--neeeda--color) 55%, transparent);
+        background-color: color-mix(in srgb, var(--neeeda--button--background-color), var(--neeeda--button--color) 20%);
       }
 
-      &:where(:focus, :focus-visible) {
+      &:focus {
         outline: 3px solid var(--neeeda--color);
         outline-offset: 3px;
-
         z-index: 1;
       }
     }

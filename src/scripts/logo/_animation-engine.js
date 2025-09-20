@@ -15,7 +15,7 @@
  * @ts-check
  */
 
-// Internal cache: persiste l'ultimo translate anche se il browser riformatta style.transform
+// Internal cache: persists the last translate even if the browser rewrites style.transform
 const __translateStore = new WeakMap();
 
 /**
@@ -49,7 +49,7 @@ export function getTranslate(el) {
  * @param {number} y
  */
 export function setTranslate(el, x, y) {
-  // Preserva un eventuale scale(...) già presente per non perdere lo stato di logoCompact.
+  // Preserve any existing scale(...) so logo compact state isn't lost.
   const prev = el.style.transform || '';
   const sm = /scale\([^)]*\)/.exec(prev);
   const scalePart = sm ? ` ${sm[0]}` : '';
@@ -76,7 +76,7 @@ export const Easing = {
   power3InOut: (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2),
 };
 
-/** Mappa nome easing → funzione (fallback: identità) */
+/** Map easing name → function (fallback: identity) */
 export function easingByName(name) {
   return name === 'power2.inOut' ? Easing.power2InOut : name === 'power3.inOut' ? Easing.power3InOut : (t) => t;
 }

@@ -4,6 +4,7 @@
       --layout--padding-top: 8.2rem;
       --layout--gap: 2.4rem;
       --layout--gradient--height: calc(var(--layout--gap) * 2 + var(--neeeda--button--primary--height));
+      --layout--article--max-inline-size: 100%;
     }
 
     body {
@@ -11,107 +12,212 @@
     }
 
     main {
+      display: flex;
+      inline-size: 100dvw;
+      min-block-size: 100dvh;
       padding: var(--layout--padding-top) var(--layout--gap) var(--layout--gap);
-    }
 
-    main > section {
-      display: flex;
-      flex-flow: column;
-      place-items: center;
-      width: 100%;
-      gap: calc(var(--layout--gap) * 2);
-      opacity: 0;
-      transition: opacity 1500ms ease-out;
-      will-change: opacity;
-    }
-
-    main > section > article {
-      display: flex;
-      flex-flow: column nowrap;
-
-      place-content: start;
-      place-items: start;
-      gap: var(--layout--gap);
-
-      flex-grow: 0;
-
-      &::before {
-        content: '';
-        position: fixed;
-        height: var(--layout--gradient--height);
-        pointer-events: none;
-        z-index: 1;
-        inset: 0 0 auto;
-      }
-
-      &::after {
-        content: '';
-        position: fixed;
-        height: var(--layout--gradient--height);
-        pointer-events: none;
-        z-index: 1;
-        inset: auto 0 0;
-      }
-
-      button {
-        position: fixed;
-        inset: auto var(--layout--gap) var(--layout--gap);
-        z-index: 2;
-      }
-    }
-
-    @media screen and (min-width: 992px) {
-      main > section {
-        place-items: start;
-        flex-flow: row;
+      & > section {
+        display: flex;
+        flex-flow: column;
+        place-items: center;
         gap: 0;
 
+        inline-size: 100%;
+        margin-block-end: 4.8rem;
+
+        opacity: 0;
+        transition: opacity 1500ms ease-out;
+        will-change: opacity;
+
         & > article {
-          max-inline-size: 50ch;
+          display: flex;
+          flex-flow: column nowrap;
+
+          place-content: start;
+          place-items: start;
+          gap: var(--layout--gap);
+
+          align-self: start;
+
+          max-inline-size: var(--layout--article--max-inline-size);
+
+          flex-grow: 0;
 
           &::before {
-            content: initial;
-            position: static;
-            inset: auto;
-            height: 0;
+            content: '';
+            position: fixed;
+            height: var(--layout--gradient--height);
             pointer-events: none;
             z-index: 1;
+            inset: 0 0 auto;
           }
 
           &::after {
-            content: initial;
-            position: static;
-            inset: auto;
-            height: 0;
+            content: '';
+            position: fixed;
+            height: var(--layout--gradient--height);
             pointer-events: none;
             z-index: 1;
+            inset: auto 0 0;
           }
 
           button {
-            position: static;
-            inset: auto;
-            z-index: initial;
+            position: fixed;
+            inset: auto var(--layout--gap) var(--layout--gap);
+            margin: auto;
+
+            z-index: 3;
+          }
+        }
+
+        & > section {
+          display: flex;
+          place-content: center;
+          place-items: center;
+
+          flex-grow: 1;
+
+          z-index: 2;
+        }
+      }
+    }
+
+    @media (orientation: landscape) {
+      main {
+        & > section {
+          & > section {
+            margin-block-end: 4.8rem;
           }
         }
       }
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 992px) {
       :root {
         --layout--padding-top: 3.6rem;
+        --layout--article--max-inline-size: 50ch;
       }
 
       html,
       body {
-        height: 100%;
+        min-block-size: 100vh;
         overflow: hidden;
       }
 
       main {
+        display: flex;
+        inline-size: 100vw;
+        block-size: 100vh;
+
         padding: 2.4rem;
 
-        &::before {
-          display: none;
+        & > section {
+          place-items: normal;
+          gap: 0;
+
+          margin-block-end: 0;
+
+          & > article {
+            &::before {
+              content: initial;
+              position: static;
+              inset: auto;
+              height: 0;
+              pointer-events: none;
+              z-index: 1;
+            }
+
+            &::after {
+              content: initial;
+              position: static;
+              inset: auto;
+              height: 0;
+              pointer-events: none;
+              z-index: 1;
+            }
+
+            button {
+              position: static;
+              inset: auto;
+              max-inline-size: initial;
+              margin: initial;
+              z-index: initial;
+            }
+          }
+
+          & > section {
+            margin-block-end: 0;
+          }
+        }
+      }
+    }
+
+    /* Adjust layout for larger desktops */
+
+    @media screen and (min-width: 1200px) /*and (min-height: 720px) */ {
+      :root {
+        --layout--article--max-inline-size: 50ch;
+      }
+
+      main {
+        & > section {
+          & > article {
+            &::before {
+              content: initial;
+              position: static;
+              inset: auto;
+              height: 0;
+              pointer-events: none;
+              z-index: 1;
+            }
+
+            &::after {
+              content: initial;
+              position: static;
+              inset: auto;
+              height: 0;
+              pointer-events: none;
+              z-index: 1;
+            }
+
+            button {
+              position: static;
+              inset: auto;
+              max-inline-size: initial;
+              margin: initial;
+              z-index: initial;
+            }
+          }
+
+          & > section {
+            display: flex;
+            place-content: center;
+            place-items: center;
+            flex-grow: 1;
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 1366px) {
+      main {
+        & > section {
+          flex-flow: row;
+
+          & > section {
+            place-content: start;
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 1600px) {
+      main {
+        & > section {
+          & > section {
+            place-content: center;
+          }
         }
       }
     }

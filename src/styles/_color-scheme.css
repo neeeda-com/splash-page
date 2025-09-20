@@ -4,57 +4,34 @@
       --neeeda--gradient--accent-a: #f99b35;
       --neeeda--gradient--accent-b: #fc67b2;
       --neeeda--gradient--accent-c: #8b97ea;
+    }
+
+    /* Default: dark theme (no system detection) */
+    :root {
+      --neeeda--background-color: #000;
+      --neeeda--color: #fff;
+
+      --neeeda--countdown-modal--background-color: #171717;
+      --neeeda--countdown-box--background-color: #2e2e2e;
 
       --neeeda--button--background-color: var(--neeeda--color);
       --neeeda--button--color: var(--neeeda--background-color);
+
+      --neeeda--radial-button--background-color: hsl(0 0% 18%);
     }
 
-    /* Theme color tokens (prefer light-dark() when supported) */
-    @supports (color: light-dark(black, white)) {
-      :root {
-        --neeeda--background-color: light-dark(#fff, #000);
-        --neeeda--color: light-dark(#000, #fff);
+    /* Explicit light override via meta[name='color-scheme'][content='light'] */
+    :root:has(meta[name='color-scheme'][content='light']) {
+      --neeeda--background-color: #fff;
+      --neeeda--color: #000;
 
-        --neeeda--countdown-modal--background-color: light-dark(#fff, #171717);
-        --neeeda--countdown-box--background-color: light-dark(#e8e8e8, #2e2e2e);
+      --neeeda--countdown-modal--background-color: #fff;
+      --neeeda--countdown-box--background-color: #e8e8e8;
 
-        --neeeda--radial-button--background-color: light-dark(hsl(0 0% 91%), hsl(0 0% 18%));
-      }
-    }
+      --neeeda--button--background-color: var(--neeeda--color);
+      --neeeda--button--color: var(--neeeda--background-color);
 
-    /* Fallback: no light-dark() support -> default dark, prefer light if media says so; allow attribute override */
-    @supports not (color: light-dark(black, white)) {
-      :root {
-        --neeeda--background-color: #000;
-        --neeeda--color: #fff;
-
-        --neeeda--countdown-modal--background-color: #171717;
-        --neeeda--countdown-box--background-color: #2e2e2e;
-
-        --neeeda--radial-button--background-color: hsl(225 20% 18%);
-      }
-
-      /* @media (prefers-color-scheme: light) {
-        :root {
-          --neeeda--background-color: #fff;
-          --neeeda--color: #000;
-
-          --neeeda--countdown-modal--background-color: #fff;
-          --neeeda--countdown-box--background-color: #e8e8e8;
-
-          --neeeda--radial-button--background-color: hsl(0 0% 91%);
-        }
-      }
- */
-      :root:has(meta[name='color-scheme'][content='light']) {
-        --neeeda--background-color: #fff;
-        --neeeda--color: #000;
-
-        --neeeda--countdown-modal--background-color: #fff;
-        --neeeda--countdown-box--background-color: #e8e8e8;
-
-        --neeeda--radial-button--background-color: hsl(0 0% 91%);
-      }
+      --neeeda--radial-button--background-color: hsl(0 0% 91%);
     }
 
     body {

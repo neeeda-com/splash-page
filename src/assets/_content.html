@@ -1,0 +1,59 @@
+<section>
+  <article>
+    <h1>Trasformiamo bisogni autentici in Imprese pronte a crescere</h1>
+    <p>Tutto inizia da un Need: lo ascoltiamo, lo validiamo e lo trasformiamo in un'Impresa necessaria.</p>
+    <button>Racconta il tuo Need</button>
+  </article>
+  <section>
+    <section data-radial aria-label="Radial actions" role="group">
+      <!-- Center button: Play video (base 288px, responsive via CSS vars/JS) -->
+      <button data-btn data-role="center" aria-label="Play video">
+        <i class="neeeda-icon-video"></i>
+        Play
+      </button>
+      <!-- i:0 — Email (base ~96px, responsive): tangent to center; angle computed in JS -->
+      <button data-btn data-icon="mail" aria-label="Email">
+        <i class="neeeda-icon-mail"></i>
+      </button>
+      <!-- i:1 — Facebook (base ~144px, responsive): tangent to center and i:0; angle computed -->
+      <button data-btn data-icon="facebook" aria-label="Facebook">
+        <i class="neeeda-icon-facebook"></i>
+      </button>
+      <!-- i:2 — Instagram (base ~216px, responsive): tangent to center and i:1; angle computed -->
+      <button data-btn data-icon="instagram" aria-label="Instagram">
+        <i class="neeeda-icon-instagram"></i>
+      </button>
+      <!-- i:3 — YouTube (base ~144px, responsive): tangent to center and i:2; angle computed -->
+      <button data-btn data-icon="youtube" aria-label="Youtube">
+        <i class="neeeda-icon-youtube"></i>
+      </button>
+      <!-- i:4 — LinkedIn (base ~216px, responsive): tangent to center and i:3; angle computed -->
+      <button data-btn data-icon="linked-in" aria-label="LinkedIn">
+        <i class="neeeda-icon-linked-in"></i>
+      </button>
+      <!-- i:5 — Color scheme toggle (base ~96px, responsive): tangent to center and i:4; angle computed -->
+      <button data-btn data-icon="color-scheme-dark" aria-label="Color Scheme Selector">
+        <i class="neeeda-icon-color-scheme-dark"></i>
+      </button>
+    </section>
+  </section>
+</section>
+<!-- Countdown modal (on-demand) -->
+<dialog id="countdown-dialog" data-countdown data-target="2025-10-10T00:00:00" aria-labelledby="cd-title">
+  <form method="dialog">
+    <header>
+      <!-- <h2 id="cd-title">Neeeda will arrive in:</h2> -->
+      <button type="submit" aria-label="Chiudi"><i class="neeeda-icon-close"></i></button>
+    </header>
+    <section>
+      <!-- <p class="cd-note">Arrival date: <span data-target-text></span></p> -->
+      <p>Neeeda arriverà tra:</p>
+      <div data-time-grid aria-live="polite" aria-atomic="true">
+        <div><span data-dd>00</span><small>Giorni</small></div>
+        <div><span data-hh>00</span><small>Ore</small></div>
+        <div><span data-mm>00</span><small>Minuti</small></div>
+        <div><span data-ss>00</span><small>Secondi</small></div>
+      </div>
+    </section>
+  </form>
+</dialog>

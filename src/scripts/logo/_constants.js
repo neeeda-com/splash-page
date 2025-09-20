@@ -16,7 +16,7 @@
 */
 
 /** Wiggle micro-step before entering pose sequence. */
-export const WIGGLE = { dxV1: -0.04, dxV3: +0.04, dur: 0.55, ease: 'power2.inOut', hold: 0.2 };
+export const WIGGLE = { dxV1: -0.07, dxV3: +0.07, dur: 0.55, ease: 'power2.inOut', hold: 0.2 };
 
 /** Third pose (percent targets inside the SVG bounding box). */
 export const POSE3 = { v1: [0.32, 0.56], v2: [0.64, 0.24], v3: [0.64, 0.64] };

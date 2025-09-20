@@ -118,7 +118,7 @@ export class InteractiveNeeedaLogo {
         this.baseCenters.set(node, this.centerOf(node));
       });
 
-      this.runPreloader();
+      // Defer preloader until after boot + fade classes to allow fade gating logic.
 
       // Apply initial scale (no animation) consistent with compact flag.
       this.applyGroupScaleTransform();
@@ -129,6 +129,11 @@ export class InteractiveNeeedaLogo {
       // Boot flash fix: show only when ready (double rAF ensures style flush).
       requestAnimationFrame(() => {
         document.body.classList.add('booted');
+        if (!document.body.classList.contains('logo-faded')) {
+          document.body.classList.add('logo-fade-in-start');
+        }
+        // Start the preloader after fade-in class is in place.
+        this.runPreloader();
       });
 
       // Resize behavior installed last.
