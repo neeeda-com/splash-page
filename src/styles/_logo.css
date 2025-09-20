@@ -2,6 +2,7 @@
   @layer logo {
     svg {
       position: fixed;
+      box-sizing: initial!important;
       inset: 0;
       display: block;
       z-index: 1; /* keep background below UI */

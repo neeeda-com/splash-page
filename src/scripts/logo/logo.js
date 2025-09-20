@@ -99,39 +99,41 @@ export class InteractiveNeeedaLogo {
 
   /** Public entry: activate drag, layout, preload animation and resize. */
   init() {
-    // Initial trail stroke width (layout independent).
-    this.applyTrailStrokeWidth();
-
-    // Setup drag handlers (will be disabled until preloader completes if not opted in).
-    this.groups.forEach(({ node }) => {
-      this.setupDrag(node);
-    });
-
-    // Initial layout + capture base centers.
-    this.layout();
-
-    // Snapshot un-translated centers once layout is established.
-    this.baseCenters.clear();
-
-    this.groups.forEach(({ node }) => {
-      this.baseCenters.set(node, this.centerOf(node));
-    });
-
-    this.runPreloader();
-
-    // Apply initial scale (no animation) consistent with compact flag.
-    this.applyGroupScaleTransform();
-
-    // Attach svg background sync so the rect covers the whole viewBox
-    this.attachCoverBg?.();
-
-    // Boot flash fix: show only when ready (double rAF ensures style flush).
     requestAnimationFrame(() => {
-      document.body.classList.add('booted');
-    });
+      // Initial trail stroke width (layout independent).
+      this.applyTrailStrokeWidth();
 
-    // Resize behavior installed last.
-    this.attachResize();
+      // Setup drag handlers (will be disabled until preloader completes if not opted in).
+      this.groups.forEach(({ node }) => {
+        this.setupDrag(node);
+      });
+
+      // Initial layout + capture base centers.
+      this.layout();
+
+      // Snapshot un-translated centers once layout is established.
+      this.baseCenters.clear();
+
+      this.groups.forEach(({ node }) => {
+        this.baseCenters.set(node, this.centerOf(node));
+      });
+
+      this.runPreloader();
+
+      // Apply initial scale (no animation) consistent with compact flag.
+      this.applyGroupScaleTransform();
+
+      // Attach svg background sync so the rect covers the whole viewBox
+      this.attachCoverBg?.();
+
+      // Boot flash fix: show only when ready (double rAF ensures style flush).
+      requestAnimationFrame(() => {
+        document.body.classList.add('booted');
+      });
+
+      // Resize behavior installed last.
+      this.attachResize();
+    });
   }
 }
 
