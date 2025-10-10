@@ -1,3 +1,5 @@
+/* ------------------------------------------------------------------
+  
 // Minimal countdown <dialog> controller with zero dependencies
 // Usage:
 //  - In HTML, include: <dialog id="countdown-dialog" data-countdown data-target="2025-12-31T23:59:59+01:00"></dialog>
@@ -218,3 +220,4 @@ class CountdownDialog {
     controller.close();
   });
 })();
+*/

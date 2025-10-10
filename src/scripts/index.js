@@ -74,4 +74,65 @@ addEventListener('DOMContentLoaded', () => {
   try {
     bootstrapInjection();
   } catch {}
+
+  // =========================
+  // LINK HANDLERS (Play, Social, CTA)
+  // =========================
+  const LINKS = {
+    // YouTube distinti
+    youtubePlay: 'https://www.youtube.com/watch?v=8hz2kKqV3Bw',   // TODO: URL per il BOTTONE PLAY (grande)
+    youtubeIcon: 'https://www.youtube.com/@NeeedaSystem',               // TODO: URL per l’ICONA YouTube nel radiale
+
+    // CTA hero -> Telegram
+    chatbot: 'https://t.me/Neeeda_bot',
+
+    // Social ring + mail
+    mail: 'mailto:hello@neeeda.com',
+    facebook: 'https://www.facebook.com/neeedasystem',
+    instagram: 'https://www.instagram.com/neeedasystem/',
+    'linked-in': 'https://www.linkedin.com/company/neeeda/?viewAsMember=true'
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = /** @type {Element} */ (event.target);
+
+    // 1) PLAY (bottone centrale radiale) -> YouTube (link dedicato)
+    const playBtn = target.closest?.('button[data-role="center"]');
+    if (playBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.open(LINKS.youtubePlay, '_blank', 'noopener');
+      return;
+    }
+
+    // 2) BOLLE SOCIAL -> link esterni (escluso toggle tema)
+    const socialBtn = target.closest?.('button[data-btn][data-icon]');
+    if (socialBtn) {
+      const icon = socialBtn.getAttribute('data-icon');
+      if (icon === 'color-scheme-dark') return; // lascia il toggle tema
+
+      // YouTube icona usa il link dedicato (diverso dal play)
+      const url =
+        icon === 'youtube' ? LINKS.youtubeIcon :
+        icon ? LINKS[icon] : null;
+
+      if (!url) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      if (icon === 'mail') window.location.href = url;   // mailto nella stessa tab
+      else window.open(url, '_blank', 'noopener');
+      return;
+    }
+
+    // 3) CTA HERO "Racconta il tuo Need" -> Telegram
+    const heroCta = target.closest?.('article > button');
+    if (heroCta) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.open(LINKS.chatbot, '_blank', 'noopener');
+      return;
+    }
+  });
+
 });
