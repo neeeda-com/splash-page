@@ -54,21 +54,21 @@ addEventListener('DOMContentLoaded', () => {
   window.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
   window.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
 
-    // Remove focus on pointer interactions so the outline doesn't appear on click/tap
-    window.addEventListener(
-      'pointerdown',
-      (e) => {
-        const target = e.target && (/** @type {Element} */ (e.target)).closest?.('button, [data-btn]');
-        if (!target) return;
-        // Defer to next frame to not interfere with click handlers
-        requestAnimationFrame(() => {
-          try {
-            /** @type {HTMLElement} */ (target).blur();
-          } catch {}
-        });
-      },
-      { capture: true }
-    );
+  // Remove focus on pointer interactions so the outline doesn't appear on click/tap
+  window.addEventListener(
+    'pointerdown',
+    (e) => {
+      const target = e.target && /** @type {Element} */ (e.target).closest?.('button, [data-btn]');
+      if (!target) return;
+      // Defer to next frame to not interfere with click handlers
+      requestAnimationFrame(() => {
+        try {
+          /** @type {HTMLElement} */ (target).blur();
+        } catch {}
+      });
+    },
+    { capture: true }
+  );
 
   // Inject external logo SVG and setup midway content injection
   try {
@@ -80,8 +80,9 @@ addEventListener('DOMContentLoaded', () => {
   // =========================
   const LINKS = {
     // YouTube distinti
-    youtubePlay: 'https://www.youtube.com/watch?v=8hz2kKqV3Bw',   // TODO: URL per il BOTTONE PLAY (grande)
-    youtubeIcon: 'https://www.youtube.com/@NeeedaSystem',               // TODO: URL per l’ICONA YouTube nel radiale
+    youtubePlayPortrait: 'https://youtube.com/shorts/qntmvygEyGU',
+    youtubePlayLandscape: 'https://www.youtube.com/watch?v=8hz2kKqV3Bw',
+    youtubeIcon: 'https://www.youtube.com/@NeeedaSystem',
 
     // CTA hero -> Telegram
     chatbot: 'https://t.me/Neeeda_bot',
@@ -90,37 +91,131 @@ addEventListener('DOMContentLoaded', () => {
     mail: 'mailto:hello@neeeda.com',
     facebook: 'https://www.facebook.com/neeedasystem',
     instagram: 'https://www.instagram.com/neeedasystem/',
-    'linked-in': 'https://www.linkedin.com/company/neeeda/?viewAsMember=true'
+    'linked-in': 'https://www.linkedin.com/company/neeeda/?viewAsMember=true',
   };
 
-  document.addEventListener('click', (event) => {
+  // Helper to load video in dialog
+  const loadVideo = (dialog) => {
+    // Use landscape version from 1025px onwards, portrait for 320-1024px
+    const isLandscape = window.innerWidth >= 1025;
+    const videoUrl = isLandscape ? LINKS.youtubePlayLandscape : LINKS.youtubePlayPortrait;
+
+    // Convert to embed URL
+    let embedUrl = '';
+    if (videoUrl.includes('shorts/')) {
+      const videoId = videoUrl.split('shorts/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    } else if (videoUrl.includes('watch?v=')) {
+      const videoId = videoUrl.split('watch?v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    const wrapper = dialog.querySelector('.video-wrapper');
+    if (wrapper && embedUrl) {
+      wrapper.innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      `;
+    }
+  };
+
+  // Create YouTube dialog (without iframe initially)
+  const createYouTubeDialog = () => {
+    const dialog = document.createElement('dialog');
+    dialog.id = 'youtube-dialog';
+    dialog.setAttribute('aria-label', 'Video YouTube');
+
+    dialog.innerHTML = `
+      <div class="dialog-content">
+        <button class="dialog-close" aria-label="Chiudi video">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="video-wrapper"></div>
+      </div>
+    `;
+
+    document.body.appendChild(dialog);
+
+    const closeDialog = () => {
+      const wrapper = dialog.querySelector('.video-wrapper');
+      if (wrapper) wrapper.innerHTML = ''; // Remove iframe to stop video
+      dialog.close();
+    };
+
+    // Close on button click
+    const closeBtn = dialog.querySelector('.dialog-close');
+    closeBtn?.addEventListener('click', closeDialog);
+
+    // Close on backdrop click
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) closeDialog();
+    });
+
+    // Close on Escape key
+    dialog.addEventListener('cancel', closeDialog);
+
+    // Track last breakpoint to reload only on actual breakpoint change (portrait/landscape)
+    let lastIsLandscape = window.innerWidth >= 1025;
+
+    const handleOrientationChange = () => {
+      if (!dialog.open) return;
+
+      const currentIsLandscape = window.innerWidth >= 1025;
+
+      // Reload only if breakpoint actually changed (crossed 1025px threshold)
+      if (currentIsLandscape !== lastIsLandscape) {
+        lastIsLandscape = currentIsLandscape;
+        loadVideo(dialog);
+      }
+    };
+
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    return dialog;
+  };  document.addEventListener('click', (event) => {
     const target = /** @type {Element} */ (event.target);
 
-    // 1) PLAY (bottone centrale radiale) -> YouTube (link dedicato)
+    // 1) PLAY (bottone centrale radiale) -> YouTube modal
     const playBtn = target.closest?.('button[data-role="center"]');
     if (playBtn) {
       event.preventDefault();
       event.stopPropagation();
-      window.open(LINKS.youtubePlay, '_blank', 'noopener');
-      return;
-    }
 
-    // 2) BOLLE SOCIAL -> link esterni (escluso toggle tema)
+      // Get or create dialog
+      let dialog = document.getElementById('youtube-dialog');
+      if (!dialog) {
+        dialog = createYouTubeDialog();
+      }
+
+      // Load video and open dialog
+      loadVideo(dialog);
+      dialog.showModal();
+      return;
+    }    // 2) BOLLE SOCIAL -> link esterni (escluso toggle tema)
     const socialBtn = target.closest?.('button[data-btn][data-icon]');
     if (socialBtn) {
       const icon = socialBtn.getAttribute('data-icon');
       if (icon === 'color-scheme-dark') return; // lascia il toggle tema
 
       // YouTube icona usa il link dedicato (diverso dal play)
-      const url =
-        icon === 'youtube' ? LINKS.youtubeIcon :
-        icon ? LINKS[icon] : null;
+      const url = icon === 'youtube' ? LINKS.youtubeIcon : icon ? LINKS[icon] : null;
 
       if (!url) return;
 
       event.preventDefault();
       event.stopPropagation();
-      if (icon === 'mail') window.location.href = url;   // mailto nella stessa tab
+      if (icon === 'mail')
+        window.location.href = url; // mailto nella stessa tab
       else window.open(url, '_blank', 'noopener');
       return;
     }
@@ -134,5 +229,4 @@ addEventListener('DOMContentLoaded', () => {
       return;
     }
   });
-
 });

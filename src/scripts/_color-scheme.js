@@ -44,7 +44,10 @@ export class ColorSchemeController {
     let m = document.querySelector(`meta[name="${this.STATUS_BAR_META_NAME}"]`);
 
     if (!m) {
-      document.head.insertAdjacentHTML('beforeend', `<meta name="${this.STATUS_BAR_META_NAME}" content="black-translucent">`);
+      document.head.insertAdjacentHTML(
+        'beforeend',
+        `<meta name="${this.STATUS_BAR_META_NAME}" content="black-translucent">`
+      );
       m = document.querySelector(`meta[name="${this.STATUS_BAR_META_NAME}"]`);
     }
 
@@ -118,9 +121,11 @@ export class ColorSchemeController {
     document.addEventListener(
       'click',
       (e) => {
-        const target = e.target && /** @type {Element} */ (e.target).closest?.(
-          'button[data-icon="color-scheme-dark"], button[data-icon^="color-scheme"]'
-        );
+        const target =
+          e.target &&
+          /** @type {Element} */ (e.target).closest?.(
+            'button[data-icon="color-scheme-dark"], button[data-icon^="color-scheme"]'
+          );
         if (!target) return;
         e.stopPropagation(); // prevent opening countdown modal
 
@@ -145,11 +150,11 @@ export class ColorSchemeController {
             if (n.matches?.('button[data-icon="color-scheme-dark"], button[data-icon^="color-scheme"]')) {
               this.applyIcon(n, meta.getAttribute('content') || initial);
             }
-            n.querySelectorAll?.(
-              'button[data-icon="color-scheme-dark"], button[data-icon^="color-scheme"]'
-            )?.forEach((b) => {
-              this.applyIcon(b, meta.getAttribute('content') || initial);
-            });
+            n.querySelectorAll?.('button[data-icon="color-scheme-dark"], button[data-icon^="color-scheme"]')?.forEach(
+              (b) => {
+                this.applyIcon(b, meta.getAttribute('content') || initial);
+              }
+            );
           });
         }
       });

@@ -64,7 +64,7 @@ export function installLayout(cls) {
       this.updateTrail();
     },
     attachResize() {
-  // Reusable resize handler (debounced via rAF)
+      // Reusable resize handler (debounced via rAF)
       const handleResize = () => {
         this.resizeRaf && cancelAnimationFrame(this.resizeRaf);
 
@@ -102,16 +102,16 @@ export function installLayout(cls) {
       // Standard resize
       window.addEventListener('resize', handleResize);
 
-  // Orientation changes on mobile may happen before the layout is fully
-  // settled; run the same handler but give the UA a couple frames to
-  // stabilize so view sizes (and getBoundingClientRect) are reliable.
+      // Orientation changes on mobile may happen before the layout is fully
+      // settled; run the same handler but give the UA a couple frames to
+      // stabilize so view sizes (and getBoundingClientRect) are reliable.
       window.addEventListener('orientationchange', () => {
-  // Run after two frames to allow orientation/layout to stabilize
+        // Run after two frames to allow orientation/layout to stabilize
         requestAnimationFrame(() => requestAnimationFrame(handleResize));
       });
 
-  // visualViewport resize is helpful on mobile when on-screen keyboard or
-  // browser chrome changes size; prefer it when available.
+      // visualViewport resize is helpful on mobile when on-screen keyboard or
+      // browser chrome changes size; prefer it when available.
       if (window.visualViewport && typeof window.visualViewport.addEventListener === 'function') {
         window.visualViewport.addEventListener('resize', handleResize);
       }

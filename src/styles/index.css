@@ -4,9 +4,9 @@
 @import './_layout.css';
 @import './_components.css';
 @import './_logo.css';
-@import './_countdown.css';
+/* @import './_countdown.css'; */
 @import './_radial-box.css';
-
+@import './_dialog.css';
 
 /* When preloader nears completion, reveal radial UI */
 body.loader-done main > section {
@@ -63,4 +63,3 @@ body.loader-done #svg-bg {
   white-space: nowrap;
   border: 0;
 }
-
